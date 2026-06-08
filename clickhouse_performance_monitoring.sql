@@ -12,7 +12,7 @@
 SELECT
     query_id,
     user,
-    elapsed,
+    elapsed
     formatReadableSize(memory_usage) AS memory_usage,
     formatReadableSize(read_bytes)   AS read_bytes,
     read_rows,
@@ -91,7 +91,7 @@ SELECT
     formatReadableSize(free_space)          AS free_space,
     formatReadableSize(total_space)         AS total_space,
     formatReadableSize(total_space - free_space) AS used_space,
-    ROUND((1 - free_space / total_space) * 100, 2) AS used_pct
+    ROUND((1 - free_space / nullIf(total_space, 0)) * 100, 2) AS used_pct
 FROM system.disks
 ORDER BY total_space DESC;
 
@@ -218,7 +218,7 @@ WHERE
           'jemalloc.allocated',
           'jemalloc.resident',
           'CGroupMemoryUsed',
-          'OSCPUUsage',
+          'OSUserTimeCPU',
           'OSIOWaitMicroseconds',
           'OSReadBytes',
           'OSWriteBytes'
@@ -257,9 +257,7 @@ SELECT
     data_path,
     formatReadableSize(bytes_on_disk) AS queue_size_on_disk,
     files_count,
-    rows_count,
     broken_files_count,
-    broken_rows_count,
     last_exception
 FROM system.distribution_queue
 ORDER BY bytes_on_disk DESC;
